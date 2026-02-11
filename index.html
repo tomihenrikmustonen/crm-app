@@ -203,7 +203,7 @@
 
       return (
         <div className="min-h-screen bg-gray-50 p-4 md:p-8">
-          <div className="max-w-6xl mx-auto">
+          <div className="max-w-7xl mx-auto">
             <div className="bg-white rounded-lg shadow-lg p-6">
               <div className="flex items-center justify-between mb-6">
                 <h1 className="text-3xl font-bold text-gray-800">CRM-järjestelmä</h1>
@@ -238,23 +238,39 @@
                     <tr>
                       <th className="px-4 py-3 text-left text-sm font-semibold">Nimi</th>
                       <th className="px-4 py-3 text-left text-sm font-semibold hidden md:table-cell">Yritys</th>
-                      <th className="px-4 py-3 text-left text-sm font-semibold hidden lg:table-cell">Email</th>
-                      <th className="px-4 py-3 text-left text-sm font-semibold hidden lg:table-cell">Puh</th>
+                      <th className="px-4 py-3 text-left text-sm font-semibold hidden lg:table-cell">Sähköposti</th>
+                      <th className="px-4 py-3 text-left text-sm font-semibold hidden xl:table-cell">Puhelin</th>
+                      <th className="px-4 py-3 text-center text-sm font-semibold hidden lg:table-cell">Muistiinpanot</th>
                       <th className="px-4 py-3 text-right text-sm font-semibold">Toiminnot</th>
                     </tr>
                   </thead>
                   <tbody className="divide-y">
                     {filtered.map(c => (
                       <tr key={c.id} className="hover:bg-gray-50">
-                        <td className="px-4 py-3"><div className="font-medium">{c.name}</div><div className="md:hidden text-sm text-gray-600">{c.company}</div></td>
+                        <td className="px-4 py-3">
+                          <div className="font-medium">{c.name}</div>
+                          <div className="md:hidden text-sm text-gray-600">{c.company}</div>
+                          <div className="lg:hidden text-sm text-gray-500">{c.email}</div>
+                        </td>
                         <td className="px-4 py-3 hidden md:table-cell">{c.company}</td>
-                        <td className="px-4 py-3 hidden lg:table-cell">{c.email}</td>
-                        <td className="px-4 py-3 hidden lg:table-cell">{c.phone}</td>
+                        <td className="px-4 py-3 text-blue-600 hidden lg:table-cell">{c.email}</td>
+                        <td className="px-4 py-3 hidden xl:table-cell">{c.phone}</td>
+                        <td className="px-4 py-3 text-center hidden lg:table-cell">
+                          <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-blue-100 text-blue-800">
+                            {(c.notes || []).length}
+                          </span>
+                        </td>
                         <td className="px-4 py-3">
                           <div className="flex justify-end gap-2">
-                            <button onClick={() => openNotesModal(c)} className="p-2 text-green-600 hover:bg-green-50 rounded-lg"><FileText /></button>
-                            <button onClick={() => handleEdit(c)} className="p-2 text-blue-600 hover:bg-blue-50 rounded-lg"><Edit2 /></button>
-                            <button onClick={() => handleDelete(c.id)} className="p-2 text-red-600 hover:bg-red-50 rounded-lg"><X /></button>
+                            <button onClick={() => openNotesModal(c)} className="p-2 text-green-600 hover:bg-green-50 rounded-lg" title="Muistiinpanot">
+                              <FileText />
+                            </button>
+                            <button onClick={() => handleEdit(c)} className="p-2 text-blue-600 hover:bg-blue-50 rounded-lg" title="Muokkaa">
+                              <Edit2 />
+                            </button>
+                            <button onClick={() => handleDelete(c.id)} className="p-2 text-red-600 hover:bg-red-50 rounded-lg" title="Poista">
+                              <X />
+                            </button>
                           </div>
                         </td>
                       </tr>
@@ -276,7 +292,7 @@
                 <div className="space-y-4">
                   <div><label className="block text-sm font-medium mb-1">Nimi *</label><input type="text" value={formData.name} onChange={e => setFormData({...formData, name: e.target.value})} className="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500" /></div>
                   <div><label className="block text-sm font-medium mb-1">Yritys</label><input type="text" value={formData.company} onChange={e => setFormData({...formData, company: e.target.value})} className="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500" /></div>
-                  <div><label className="block text-sm font-medium mb-1">Email</label><input type="email" value={formData.email} onChange={e => setFormData({...formData, email: e.target.value})} className="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500" /></div>
+                  <div><label className="block text-sm font-medium mb-1">Sähköposti</label><input type="email" value={formData.email} onChange={e => setFormData({...formData, email: e.target.value})} className="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500" /></div>
                   <div><label className="block text-sm font-medium mb-1">Puhelin</label><input type="tel" value={formData.phone} onChange={e => setFormData({...formData, phone: e.target.value})} className="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500" /></div>
                   <div className="flex gap-3 pt-4">
                     <button onClick={handleSubmit} disabled={loading} className="flex-1 flex items-center justify-center gap-2 bg-blue-600 text-white px-6 py-2 rounded-lg hover:bg-blue-700 disabled:opacity-50"><Save />Tallenna</button>
