@@ -4,21 +4,20 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>CRM-järjestelmä</title>
+  <script crossorigin src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
+  <script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
+  <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
   <script src="https://cdn.tailwindcss.com"></script>
 </head>
 <body class="bg-gray-50">
   <div id="root"></div>
 
-  <script type="module">
-    import React from 'https://esm.sh/react@18.2.0';
-    import ReactDOM from 'https://esm.sh/react-dom@18.2.0/client';
-    import { useState, useEffect } from 'https://esm.sh/react@18.2.0';
+  <script type="text/babel">
+    const { useState, useEffect } = React;
 
-    // Supabase konfiguraatio
     const SUPABASE_URL = 'https://bwrxeupdfvzyaseypdtw.supabase.co';
     const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImJ3cnhldXBkZnZ6eWFzZXlwZHR3Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzA4MTAxOTIsImV4cCI6MjA4NjM4NjE5Mn0.H96cRGeLKpUB5lKafkgwudROO4MmHJ5Rbmj7AWM5Av8';
 
-    // Lucide ikonikomponentit (yksinkertaistettu)
     const Search = () => <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" /></svg>;
     const Plus = () => <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" /></svg>;
     const Edit2 = () => <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" /></svg>;
@@ -30,58 +29,38 @@
     const Cloud = () => <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 15a4 4 0 004 4h9a5 5 0 10-.1-9.999 5.002 5.002 0 10-9.78 2.096A4.001 4.001 0 003 15z" /></svg>;
     const CloudOff = () => <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 15a4 4 0 01.88-2.5M3 15h12M3 15l9-9m0 0l9 9m-9-9v12" /></svg>;
 
-    // Supabase API funktiot
     const supabaseAPI = {
       async getCustomers() {
-        const response = await fetch(`${SUPABASE_URL}/rest/v1/customers?select=*&order=created_at.desc`, {
-          headers: {
-            'apikey': SUPABASE_ANON_KEY,
-            'Authorization': `Bearer ${SUPABASE_ANON_KEY}`
-          }
+        const res = await fetch(`${SUPABASE_URL}/rest/v1/customers?select=*&order=created_at.desc`, {
+          headers: { 'apikey': SUPABASE_ANON_KEY, 'Authorization': `Bearer ${SUPABASE_ANON_KEY}` }
         });
-        if (!response.ok) throw new Error('Failed to fetch customers');
-        return response.json();
+        if (!res.ok) throw new Error('Failed');
+        return res.json();
       },
-
-      async createCustomer(customer) {
-        const response = await fetch(`${SUPABASE_URL}/rest/v1/customers`, {
+      async createCustomer(c) {
+        const res = await fetch(`${SUPABASE_URL}/rest/v1/customers`, {
           method: 'POST',
-          headers: {
-            'apikey': SUPABASE_ANON_KEY,
-            'Authorization': `Bearer ${SUPABASE_ANON_KEY}`,
-            'Content-Type': 'application/json',
-            'Prefer': 'return=representation'
-          },
-          body: JSON.stringify(customer)
+          headers: { 'apikey': SUPABASE_ANON_KEY, 'Authorization': `Bearer ${SUPABASE_ANON_KEY}`, 'Content-Type': 'application/json', 'Prefer': 'return=representation' },
+          body: JSON.stringify(c)
         });
-        if (!response.ok) throw new Error('Failed to create customer');
-        return response.json();
+        if (!res.ok) throw new Error('Failed');
+        return res.json();
       },
-
-      async updateCustomer(id, customer) {
-        const response = await fetch(`${SUPABASE_URL}/rest/v1/customers?id=eq.${id}`, {
+      async updateCustomer(id, c) {
+        const res = await fetch(`${SUPABASE_URL}/rest/v1/customers?id=eq.${id}`, {
           method: 'PATCH',
-          headers: {
-            'apikey': SUPABASE_ANON_KEY,
-            'Authorization': `Bearer ${SUPABASE_ANON_KEY}`,
-            'Content-Type': 'application/json',
-            'Prefer': 'return=representation'
-          },
-          body: JSON.stringify(customer)
+          headers: { 'apikey': SUPABASE_ANON_KEY, 'Authorization': `Bearer ${SUPABASE_ANON_KEY}`, 'Content-Type': 'application/json', 'Prefer': 'return=representation' },
+          body: JSON.stringify(c)
         });
-        if (!response.ok) throw new Error('Failed to update customer');
-        return response.json();
+        if (!res.ok) throw new Error('Failed');
+        return res.json();
       },
-
       async deleteCustomer(id) {
-        const response = await fetch(`${SUPABASE_URL}/rest/v1/customers?id=eq.${id}`, {
+        const res = await fetch(`${SUPABASE_URL}/rest/v1/customers?id=eq.${id}`, {
           method: 'DELETE',
-          headers: {
-            'apikey': SUPABASE_ANON_KEY,
-            'Authorization': `Bearer ${SUPABASE_ANON_KEY}`
-          }
+          headers: { 'apikey': SUPABASE_ANON_KEY, 'Authorization': `Bearer ${SUPABASE_ANON_KEY}` }
         });
-        if (!response.ok) throw new Error('Failed to delete customer');
+        if (!res.ok) throw new Error('Failed');
       }
     };
 
@@ -92,13 +71,7 @@
       const [isNotesModalOpen, setIsNotesModalOpen] = useState(false);
       const [editingCustomer, setEditingCustomer] = useState(null);
       const [selectedCustomer, setSelectedCustomer] = useState(null);
-      const [formData, setFormData] = useState({
-        name: '',
-        company: '',
-        email: '',
-        phone: '',
-        notes: []
-      });
+      const [formData, setFormData] = useState({ name: '', company: '', email: '', phone: '', notes: [] });
       const [newNote, setNewNote] = useState('');
       const [loading, setLoading] = useState(false);
       const [error, setError] = useState(null);
@@ -112,421 +85,243 @@
           setCustomers(data);
           setIsOnline(true);
         } catch (err) {
-          console.error('Error loading customers:', err);
-          setError('Virhe ladattaessa asiakkaita. Tarkista Supabase-asetukset.');
+          setError('Virhe ladattaessa');
           setIsOnline(false);
         } finally {
           setLoading(false);
         }
       };
 
-      useEffect(() => {
-        loadCustomers();
-      }, []);
+      useEffect(() => { loadCustomers(); }, []);
 
       const handleSubmit = async () => {
         if (!formData.name.trim()) return;
-        
         try {
           setLoading(true);
-          setError(null);
-
           if (editingCustomer) {
-            await supabaseAPI.updateCustomer(editingCustomer.id, {
-              name: formData.name,
-              company: formData.company,
-              email: formData.email,
-              phone: formData.phone,
-              notes: formData.notes || []
-            });
+            await supabaseAPI.updateCustomer(editingCustomer.id, { name: formData.name, company: formData.company, email: formData.email, phone: formData.phone, notes: formData.notes || [] });
           } else {
-            await supabaseAPI.createCustomer({
-              name: formData.name,
-              company: formData.company,
-              email: formData.email,
-              phone: formData.phone,
-              notes: []
-            });
+            await supabaseAPI.createCustomer({ name: formData.name, company: formData.company, email: formData.email, phone: formData.phone, notes: [] });
           }
-          
           await loadCustomers();
           resetForm();
         } catch (err) {
-          console.error('Error saving customer:', err);
-          setError('Virhe tallentaessa asiakasta.');
+          setError('Virhe tallentaessa');
         } finally {
           setLoading(false);
         }
       };
 
-      const handleEdit = (customer) => {
-        setEditingCustomer(customer);
-        setFormData(customer);
-        setIsModalOpen(true);
-      };
-
+      const handleEdit = (c) => { setEditingCustomer(c); setFormData(c); setIsModalOpen(true); };
+      
       const handleDelete = async (id) => {
-        if (!window.confirm('Haluatko varmasti poistaa tämän asiakkaan?')) return;
-        
+        if (!confirm('Poista?')) return;
         try {
           setLoading(true);
-          setError(null);
           await supabaseAPI.deleteCustomer(id);
           await loadCustomers();
         } catch (err) {
-          console.error('Error deleting customer:', err);
-          setError('Virhe poistettaessa asiakasta.');
+          setError('Virhe');
         } finally {
           setLoading(false);
         }
       };
 
-      const resetForm = () => {
-        setFormData({ name: '', company: '', email: '', phone: '', notes: [] });
-        setEditingCustomer(null);
-        setIsModalOpen(false);
-      };
-
-      const openNotesModal = (customer) => {
-        setSelectedCustomer(customer);
-        setIsNotesModalOpen(true);
-        setNewNote('');
-      };
+      const resetForm = () => { setFormData({ name: '', company: '', email: '', phone: '', notes: [] }); setEditingCustomer(null); setIsModalOpen(false); };
+      const openNotesModal = (c) => { setSelectedCustomer(c); setIsNotesModalOpen(true); setNewNote(''); };
 
       const addNote = async () => {
         if (!newNote.trim()) return;
-        
         try {
           setLoading(true);
-          const updatedNotes = [...(selectedCustomer.notes || []), {
-            id: Date.now(),
-            text: newNote,
-            date: new Date().toLocaleString('fi-FI')
-          }];
-          
-          await supabaseAPI.updateCustomer(selectedCustomer.id, {
-            ...selectedCustomer,
-            notes: updatedNotes
-          });
-          
+          const notes = [...(selectedCustomer.notes || []), { id: Date.now(), text: newNote, date: new Date().toLocaleString('fi-FI') }];
+          await supabaseAPI.updateCustomer(selectedCustomer.id, { ...selectedCustomer, notes });
           await loadCustomers();
-          const updated = customers.find(c => c.id === selectedCustomer.id);
-          setSelectedCustomer({ ...selectedCustomer, notes: updatedNotes });
+          setSelectedCustomer({ ...selectedCustomer, notes });
           setNewNote('');
         } catch (err) {
-          console.error('Error adding note:', err);
-          setError('Virhe lisättäessä muistiinpanoa.');
+          setError('Virhe');
         } finally {
           setLoading(false);
         }
       };
 
-      const deleteNote = async (noteId) => {
+      const deleteNote = async (nid) => {
         try {
           setLoading(true);
-          const updatedNotes = selectedCustomer.notes.filter(n => n.id !== noteId);
-          
-          await supabaseAPI.updateCustomer(selectedCustomer.id, {
-            ...selectedCustomer,
-            notes: updatedNotes
-          });
-          
+          const notes = selectedCustomer.notes.filter(n => n.id !== nid);
+          await supabaseAPI.updateCustomer(selectedCustomer.id, { ...selectedCustomer, notes });
           await loadCustomers();
-          setSelectedCustomer({ ...selectedCustomer, notes: updatedNotes });
+          setSelectedCustomer({ ...selectedCustomer, notes });
         } catch (err) {
-          console.error('Error deleting note:', err);
-          setError('Virhe poistettaessa muistiinpanoa.');
+          setError('Virhe');
         } finally {
           setLoading(false);
         }
       };
 
       const exportData = () => {
-        const dataStr = JSON.stringify(customers, null, 2);
-        const dataBlob = new Blob([dataStr], { type: 'application/json' });
-        const url = URL.createObjectURL(dataBlob);
+        const blob = new Blob([JSON.stringify(customers, null, 2)], { type: 'application/json' });
+        const url = URL.createObjectURL(blob);
         const link = document.createElement('a');
         link.href = url;
-        link.download = `crm-data-${new Date().toISOString().split('T')[0]}.json`;
+        link.download = `crm-${new Date().toISOString().split('T')[0]}.json`;
         link.click();
         URL.revokeObjectURL(url);
       };
 
-      const importData = async (event) => {
-        const file = event.target.files[0];
+      const importData = async (e) => {
+        const file = e.target.files[0];
         if (!file) return;
-        
         const reader = new FileReader();
-        reader.onload = async (e) => {
+        reader.onload = async (ev) => {
           try {
-            const imported = JSON.parse(e.target.result);
-            if (!Array.isArray(imported)) {
-              alert('Virheellinen tiedostomuoto');
-              return;
-            }
-            
+            const data = JSON.parse(ev.target.result);
+            if (!Array.isArray(data)) { alert('Virhe'); return; }
             setLoading(true);
-            
-            for (const customer of imported) {
-              const { id, created_at, ...customerData } = customer;
-              await supabaseAPI.createCustomer(customerData);
+            for (const c of data) {
+              const { id, created_at, ...rest } = c;
+              await supabaseAPI.createCustomer(rest);
             }
-            
             await loadCustomers();
-            alert('Data tuotu onnistuneesti!');
-          } catch (error) {
-            console.error('Import error:', error);
-            alert('Virhe tiedoston lukemisessa');
+            alert('Tuotu!');
+          } catch (err) {
+            alert('Virhe');
           } finally {
             setLoading(false);
           }
         };
         reader.readAsText(file);
-        event.target.value = '';
+        e.target.value = '';
       };
 
-      const filteredCustomers = customers.filter(c =>
+      const filtered = customers.filter(c =>
         (c.name || '').toLowerCase().includes(searchTerm.toLowerCase()) ||
         (c.company || '').toLowerCase().includes(searchTerm.toLowerCase()) ||
         (c.email || '').toLowerCase().includes(searchTerm.toLowerCase())
       );
 
-      return React.createElement('div', { className: 'min-h-screen bg-gray-50 p-4 md:p-8' },
-        React.createElement('div', { className: 'max-w-6xl mx-auto' },
-          React.createElement('div', { className: 'bg-white rounded-lg shadow-lg p-6' },
-            React.createElement('div', { className: 'flex items-center justify-between mb-6' },
-              React.createElement('h1', { className: 'text-3xl font-bold text-gray-800' }, 'CRM-järjestelmä'),
-              React.createElement('div', { className: 'flex items-center gap-2' },
-                isOnline 
-                  ? React.createElement('div', { className: 'flex items-center gap-1 text-green-600', title: 'Yhdistetty Supabaseen' },
-                      React.createElement(Cloud),
-                      React.createElement('span', { className: 'text-sm hidden sm:inline' }, 'Pilvi')
-                    )
-                  : React.createElement('div', { className: 'flex items-center gap-1 text-red-600', title: 'Ei yhteyttä' },
-                      React.createElement(CloudOff),
-                      React.createElement('span', { className: 'text-sm hidden sm:inline' }, 'Offline')
-                    )
-              )
-            ),
+      return (
+        <div className="min-h-screen bg-gray-50 p-4 md:p-8">
+          <div className="max-w-6xl mx-auto">
+            <div className="bg-white rounded-lg shadow-lg p-6">
+              <div className="flex items-center justify-between mb-6">
+                <h1 className="text-3xl font-bold text-gray-800">CRM-järjestelmä</h1>
+                <div className="flex items-center gap-2">
+                  {isOnline ? (
+                    <div className="flex items-center gap-1 text-green-600"><Cloud /><span className="text-sm hidden sm:inline">Pilvi</span></div>
+                  ) : (
+                    <div className="flex items-center gap-1 text-red-600"><CloudOff /><span className="text-sm hidden sm:inline">Offline</span></div>
+                  )}
+                </div>
+              </div>
 
-            error && React.createElement('div', { className: 'mb-4 p-4 bg-red-50 border border-red-200 rounded-lg text-red-700' }, error),
-            
-            React.createElement('div', { className: 'flex flex-col md:flex-row gap-4 mb-6' },
-              React.createElement('div', { className: 'flex-1 relative' },
-                React.createElement('div', { className: 'absolute left-3 top-3 text-gray-400' }, React.createElement(Search)),
-                React.createElement('input', {
-                  type: 'text',
-                  placeholder: 'Hae asiakkaita...',
-                  value: searchTerm,
-                  onChange: (e) => setSearchTerm(e.target.value),
-                  className: 'w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent'
-                })
-              ),
-              React.createElement('div', { className: 'flex gap-2' },
-                React.createElement('button', {
-                  onClick: exportData,
-                  disabled: loading,
-                  className: 'flex items-center justify-center gap-2 bg-green-600 text-white px-4 py-2 rounded-lg hover:bg-green-700 transition disabled:opacity-50',
-                  title: 'Vie data'
-                },
-                  React.createElement(Download),
-                  React.createElement('span', { className: 'hidden sm:inline' }, 'Vie')
-                ),
-                React.createElement('label', {
-                  className: 'flex items-center justify-center gap-2 bg-purple-600 text-white px-4 py-2 rounded-lg hover:bg-purple-700 transition cursor-pointer',
-                  title: 'Tuo data'
-                },
-                  React.createElement(Upload),
-                  React.createElement('span', { className: 'hidden sm:inline' }, 'Tuo'),
-                  React.createElement('input', {
-                    type: 'file',
-                    accept: '.json',
-                    onChange: importData,
-                    disabled: loading,
-                    className: 'hidden'
-                  })
-                ),
-                React.createElement('button', {
-                  onClick: () => setIsModalOpen(true),
-                  disabled: loading,
-                  className: 'flex items-center justify-center gap-2 bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition disabled:opacity-50'
-                },
-                  React.createElement(Plus),
-                  React.createElement('span', { className: 'hidden sm:inline' }, 'Lisää asiakas')
-                )
-              )
-            ),
+              {error && <div className="mb-4 p-4 bg-red-50 border border-red-200 rounded-lg text-red-700">{error}</div>}
 
-            loading && React.createElement('div', { className: 'text-center py-4 text-gray-600' }, 'Ladataan...'),
+              <div className="flex flex-col md:flex-row gap-4 mb-6">
+                <div className="flex-1 relative">
+                  <div className="absolute left-3 top-3 text-gray-400"><Search /></div>
+                  <input type="text" placeholder="Hae..." value={searchTerm} onChange={e => setSearchTerm(e.target.value)} className="w-full pl-10 pr-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500" />
+                </div>
+                <div className="flex gap-2">
+                  <button onClick={exportData} disabled={loading} className="flex items-center gap-2 bg-green-600 text-white px-4 py-2 rounded-lg hover:bg-green-700 disabled:opacity-50"><Download /><span className="hidden sm:inline">Vie</span></button>
+                  <label className="flex items-center gap-2 bg-purple-600 text-white px-4 py-2 rounded-lg hover:bg-purple-700 cursor-pointer"><Upload /><span className="hidden sm:inline">Tuo</span><input type="file" accept=".json" onChange={importData} disabled={loading} className="hidden" /></label>
+                  <button onClick={() => setIsModalOpen(true)} disabled={loading} className="flex items-center gap-2 bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 disabled:opacity-50"><Plus /><span className="hidden sm:inline">Lisää</span></button>
+                </div>
+              </div>
 
-            React.createElement('div', { className: 'overflow-x-auto' },
-              React.createElement('table', { className: 'w-full' },
-                React.createElement('thead', { className: 'bg-gray-100' },
-                  React.createElement('tr', null,
-                    React.createElement('th', { className: 'px-4 py-3 text-left text-sm font-semibold text-gray-700' }, 'Nimi'),
-                    React.createElement('th', { className: 'px-4 py-3 text-left text-sm font-semibold text-gray-700 hidden md:table-cell' }, 'Yritys'),
-                    React.createElement('th', { className: 'px-4 py-3 text-left text-sm font-semibold text-gray-700 hidden lg:table-cell' }, 'Sähköposti'),
-                    React.createElement('th', { className: 'px-4 py-3 text-left text-sm font-semibold text-gray-700 hidden lg:table-cell' }, 'Puhelin'),
-                    React.createElement('th', { className: 'px-4 py-3 text-right text-sm font-semibold text-gray-700' }, 'Toiminnot')
-                  )
-                ),
-                React.createElement('tbody', { className: 'divide-y divide-gray-200' },
-                  filteredCustomers.map(customer =>
-                    React.createElement('tr', { key: customer.id, className: 'hover:bg-gray-50' },
-                      React.createElement('td', { className: 'px-4 py-3' },
-                        React.createElement('div', null,
-                          React.createElement('div', { className: 'font-medium text-gray-900' }, customer.name),
-                          React.createElement('div', { className: 'md:hidden text-sm text-gray-600' }, customer.company)
-                        )
-                      ),
-                      React.createElement('td', { className: 'px-4 py-3 text-gray-700 hidden md:table-cell' }, customer.company),
-                      React.createElement('td', { className: 'px-4 py-3 text-gray-700 hidden lg:table-cell' }, customer.email),
-                      React.createElement('td', { className: 'px-4 py-3 text-gray-700 hidden lg:table-cell' }, customer.phone),
-                      React.createElement('td', { className: 'px-4 py-3' },
-                        React.createElement('div', { className: 'flex justify-end gap-2' },
-                          React.createElement('button', {
-                            onClick: () => openNotesModal(customer),
-                            disabled: loading,
-                            className: 'p-2 text-green-600 hover:bg-green-50 rounded-lg transition disabled:opacity-50',
-                            title: 'Muistiinpanot'
-                          }, React.createElement(FileText)),
-                          React.createElement('button', {
-                            onClick: () => handleEdit(customer),
-                            disabled: loading,
-                            className: 'p-2 text-blue-600 hover:bg-blue-50 rounded-lg transition disabled:opacity-50',
-                            title: 'Muokkaa'
-                          }, React.createElement(Edit2)),
-                          React.createElement('button', {
-                            onClick: () => handleDelete(customer.id),
-                            disabled: loading,
-                            className: 'p-2 text-red-600 hover:bg-red-50 rounded-lg transition disabled:opacity-50',
-                            title: 'Poista'
-                          }, React.createElement(X))
-                        )
-                      )
-                    )
-                  )
-                )
-              ),
-              !loading && filteredCustomers.length === 0 && React.createElement('div', { className: 'text-center py-12 text-gray-500' }, 'Ei asiakkaita näytettäväksi')
-            )
-          )
-        ),
+              {loading && <div className="text-center py-4">Ladataan...</div>}
 
-        // Modal lomake
-        isModalOpen && React.createElement('div', { className: 'fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50' },
-          React.createElement('div', { className: 'bg-white rounded-lg shadow-xl max-w-md w-full p-6' },
-            React.createElement('div', { className: 'flex justify-between items-center mb-4' },
-              React.createElement('h2', { className: 'text-2xl font-bold text-gray-800' }, editingCustomer ? 'Muokkaa asiakasta' : 'Uusi asiakas'),
-              React.createElement('button', { onClick: resetForm, className: 'text-gray-500 hover:text-gray-700' }, React.createElement(X))
-            ),
-            React.createElement('div', { className: 'space-y-4' },
-              React.createElement('div', null,
-                React.createElement('label', { className: 'block text-sm font-medium text-gray-700 mb-1' }, 'Nimi *'),
-                React.createElement('input', {
-                  type: 'text',
-                  required: true,
-                  value: formData.name,
-                  onChange: (e) => setFormData({...formData, name: e.target.value}),
-                  className: 'w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent'
-                })
-              ),
-              React.createElement('div', null,
-                React.createElement('label', { className: 'block text-sm font-medium text-gray-700 mb-1' }, 'Yritys'),
-                React.createElement('input', {
-                  type: 'text',
-                  value: formData.company,
-                  onChange: (e) => setFormData({...formData, company: e.target.value}),
-                  className: 'w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent'
-                })
-              ),
-              React.createElement('div', null,
-                React.createElement('label', { className: 'block text-sm font-medium text-gray-700 mb-1' }, 'Sähköposti'),
-                React.createElement('input', {
-                  type: 'email',
-                  value: formData.email,
-                  onChange: (e) => setFormData({...formData, email: e.target.value}),
-                  className: 'w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent'
-                })
-              ),
-              React.createElement('div', null,
-                React.createElement('label', { className: 'block text-sm font-medium text-gray-700 mb-1' }, 'Puhelin'),
-                React.createElement('input', {
-                  type: 'tel',
-                  value: formData.phone,
-                  onChange: (e) => setFormData({...formData, phone: e.target.value}),
-                  className: 'w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent'
-                })
-              ),
-              React.createElement('div', { className: 'flex gap-3 pt-4' },
-                React.createElement('button', {
-                  onClick: handleSubmit,
-                  disabled: loading,
-                  className: 'flex-1 flex items-center justify-center gap-2 bg-blue-600 text-white px-6 py-2 rounded-lg hover:bg-blue-700 transition disabled:opacity-50'
-                },
-                  React.createElement(Save),
-                  'Tallenna'
-                ),
-                React.createElement('button', {
-                  onClick: resetForm,
-                  className: 'px-6 py-2 border border-gray-300 rounded-lg hover:bg-gray-50 transition'
-                }, 'Peruuta')
-              )
-            )
-          )
-        ),
+              <div className="overflow-x-auto">
+                <table className="w-full">
+                  <thead className="bg-gray-100">
+                    <tr>
+                      <th className="px-4 py-3 text-left text-sm font-semibold">Nimi</th>
+                      <th className="px-4 py-3 text-left text-sm font-semibold hidden md:table-cell">Yritys</th>
+                      <th className="px-4 py-3 text-left text-sm font-semibold hidden lg:table-cell">Email</th>
+                      <th className="px-4 py-3 text-left text-sm font-semibold hidden lg:table-cell">Puh</th>
+                      <th className="px-4 py-3 text-right text-sm font-semibold">Toiminnot</th>
+                    </tr>
+                  </thead>
+                  <tbody className="divide-y">
+                    {filtered.map(c => (
+                      <tr key={c.id} className="hover:bg-gray-50">
+                        <td className="px-4 py-3"><div className="font-medium">{c.name}</div><div className="md:hidden text-sm text-gray-600">{c.company}</div></td>
+                        <td className="px-4 py-3 hidden md:table-cell">{c.company}</td>
+                        <td className="px-4 py-3 hidden lg:table-cell">{c.email}</td>
+                        <td className="px-4 py-3 hidden lg:table-cell">{c.phone}</td>
+                        <td className="px-4 py-3">
+                          <div className="flex justify-end gap-2">
+                            <button onClick={() => openNotesModal(c)} className="p-2 text-green-600 hover:bg-green-50 rounded-lg"><FileText /></button>
+                            <button onClick={() => handleEdit(c)} className="p-2 text-blue-600 hover:bg-blue-50 rounded-lg"><Edit2 /></button>
+                            <button onClick={() => handleDelete(c.id)} className="p-2 text-red-600 hover:bg-red-50 rounded-lg"><X /></button>
+                          </div>
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+                {!loading && filtered.length === 0 && <div className="text-center py-12 text-gray-500">Ei asiakkaita</div>}
+              </div>
+            </div>
+          </div>
 
-        // Muistiinpano modal
-        isNotesModalOpen && selectedCustomer && React.createElement('div', { className: 'fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50' },
-          React.createElement('div', { className: 'bg-white rounded-lg shadow-xl max-w-2xl w-full p-6 max-h-[90vh] overflow-y-auto' },
-            React.createElement('div', { className: 'flex justify-between items-center mb-4' },
-              React.createElement('h2', { className: 'text-2xl font-bold text-gray-800' }, `Muistiinpanot - ${selectedCustomer.name}`),
-              React.createElement('button', {
-                onClick: () => setIsNotesModalOpen(false),
-                className: 'text-gray-500 hover:text-gray-700'
-              }, React.createElement(X))
-            ),
-            React.createElement('div', { className: 'mb-4' },
-              React.createElement('textarea', {
-                value: newNote,
-                onChange: (e) => setNewNote(e.target.value),
-                placeholder: 'Kirjoita uusi muistiinpano...',
-                className: 'w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent resize-none',
-                rows: 3
-              }),
-              React.createElement('button', {
-                onClick: addNote,
-                disabled: loading,
-                className: 'mt-2 flex items-center gap-2 bg-green-600 text-white px-4 py-2 rounded-lg hover:bg-green-700 transition disabled:opacity-50'
-              },
-                React.createElement(Plus),
-                'Lisää muistiinpano'
-              )
-            ),
-            React.createElement('div', { className: 'space-y-3' },
-              selectedCustomer.notes && selectedCustomer.notes.length > 0
-                ? [...selectedCustomer.notes].reverse().map(note =>
-                    React.createElement('div', { key: note.id, className: 'bg-gray-50 p-4 rounded-lg' },
-                      React.createElement('div', { className: 'flex justify-between items-start mb-2' },
-                        React.createElement('span', { className: 'text-sm text-gray-600' }, note.date),
-                        React.createElement('button', {
-                          onClick: () => deleteNote(note.id),
-                          disabled: loading,
-                          className: 'text-red-600 hover:text-red-700 disabled:opacity-50'
-                        }, React.createElement(X))
-                      ),
-                      React.createElement('p', { className: 'text-gray-800 whitespace-pre-wrap' }, note.text)
-                    )
-                  )
-                : React.createElement('p', { className: 'text-center text-gray-500 py-8' }, 'Ei muistiinpanoja')
-            )
-          )
-        )
+          {isModalOpen && (
+            <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50">
+              <div className="bg-white rounded-lg shadow-xl max-w-md w-full p-6">
+                <div className="flex justify-between items-center mb-4">
+                  <h2 className="text-2xl font-bold">{editingCustomer ? 'Muokkaa' : 'Uusi'}</h2>
+                  <button onClick={resetForm} className="text-gray-500"><X /></button>
+                </div>
+                <div className="space-y-4">
+                  <div><label className="block text-sm font-medium mb-1">Nimi *</label><input type="text" value={formData.name} onChange={e => setFormData({...formData, name: e.target.value})} className="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500" /></div>
+                  <div><label className="block text-sm font-medium mb-1">Yritys</label><input type="text" value={formData.company} onChange={e => setFormData({...formData, company: e.target.value})} className="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500" /></div>
+                  <div><label className="block text-sm font-medium mb-1">Email</label><input type="email" value={formData.email} onChange={e => setFormData({...formData, email: e.target.value})} className="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500" /></div>
+                  <div><label className="block text-sm font-medium mb-1">Puhelin</label><input type="tel" value={formData.phone} onChange={e => setFormData({...formData, phone: e.target.value})} className="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500" /></div>
+                  <div className="flex gap-3 pt-4">
+                    <button onClick={handleSubmit} disabled={loading} className="flex-1 flex items-center justify-center gap-2 bg-blue-600 text-white px-6 py-2 rounded-lg hover:bg-blue-700 disabled:opacity-50"><Save />Tallenna</button>
+                    <button onClick={resetForm} className="px-6 py-2 border rounded-lg hover:bg-gray-50">Peruuta</button>
+                  </div>
+                </div>
+              </div>
+            </div>
+          )}
+
+          {isNotesModalOpen && selectedCustomer && (
+            <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50">
+              <div className="bg-white rounded-lg shadow-xl max-w-2xl w-full p-6 max-h-[90vh] overflow-y-auto">
+                <div className="flex justify-between items-center mb-4">
+                  <h2 className="text-2xl font-bold">Muistiinpanot - {selectedCustomer.name}</h2>
+                  <button onClick={() => setIsNotesModalOpen(false)} className="text-gray-500"><X /></button>
+                </div>
+                <div className="mb-4">
+                  <textarea value={newNote} onChange={e => setNewNote(e.target.value)} placeholder="Uusi muistiinpano..." className="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 resize-none" rows="3" />
+                  <button onClick={addNote} disabled={loading} className="mt-2 flex items-center gap-2 bg-green-600 text-white px-4 py-2 rounded-lg hover:bg-green-700 disabled:opacity-50"><Plus />Lisää</button>
+                </div>
+                <div className="space-y-3">
+                  {selectedCustomer.notes && selectedCustomer.notes.length > 0 ? (
+                    [...selectedCustomer.notes].reverse().map(n => (
+                      <div key={n.id} className="bg-gray-50 p-4 rounded-lg">
+                        <div className="flex justify-between items-start mb-2">
+                          <span className="text-sm text-gray-600">{n.date}</span>
+                          <button onClick={() => deleteNote(n.id)} disabled={loading} className="text-red-600 hover:text-red-700 disabled:opacity-50"><X /></button>
+                        </div>
+                        <p className="text-gray-800 whitespace-pre-wrap">{n.text}</p>
+                      </div>
+                    ))
+                  ) : (
+                    <p className="text-center text-gray-500 py-8">Ei muistiinpanoja</p>
+                  )}
+                </div>
+              </div>
+            </div>
+          )}
+        </div>
       );
     }
 
     const root = ReactDOM.createRoot(document.getElementById('root'));
-    root.render(React.createElement(CRMApp));
+    root.render(<CRMApp />);
   </script>
 </body>
 </html>
